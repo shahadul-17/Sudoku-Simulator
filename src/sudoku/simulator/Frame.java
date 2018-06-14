@@ -22,7 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class Frame extends JFrame implements ActionListener, MouseListener, MouseWheelListener, KeyListener, SimulatorListener {
+public class Frame extends JFrame implements ActionListener, MouseListener, MouseWheelListener, KeyListener, SimulationListener {
 	
 	private static final long serialVersionUID = 6210472781464718706L;
 	
@@ -208,7 +208,7 @@ public class Frame extends JFrame implements ActionListener, MouseListener, Mous
 					enableControls(false);
 					
 					simulator = new Simulator(checkBoxShowBacktracking.isSelected(), Grid.grids[0][0][0][0]);		// we will always start from the first grid of the board...
-					simulator.addSimulatorListener(this);
+					simulator.addSimulationListener(this);
 					
 					if (simulator.areValuesValid()) {
 						new Thread(simulator).start();

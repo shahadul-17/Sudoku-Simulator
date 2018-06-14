@@ -5,7 +5,7 @@ public class Simulator implements Runnable {
 	private boolean backtrackingVisibile;
 	private char flag = 0;		// initially flag is false...
 	
-	private SimulatorListener simulatorListener;
+	private SimulationListener simulationListener;
 	
 	private Grid initialGrid;
 	
@@ -21,11 +21,11 @@ public class Simulator implements Runnable {
 	public void stop() {
 		flag = 2;
 		
-		simulatorListener.simulationStopped();
+		simulationListener.simulationStopped();
 	}
 	
-	public void addSimulatorListener(SimulatorListener simulatorListener) {
-		this.simulatorListener = simulatorListener;
+	public void addSimulationListener(SimulationListener simulationListener) {
+		this.simulationListener = simulationListener;
 	}
 	
 	private boolean isValid(char digit, Grid currentGrid) {
@@ -86,14 +86,14 @@ public class Simulator implements Runnable {
 			}
 		}
 		
-		if (counter == Main.BOARD_SIZE * Main.BOARD_SIZE) {		// all grids are filled...
-			simulatorListener.noEmptyGrid();
-			
-			return false;
+		if (!valid) {
+			simulationListener.validationFailed();
 		}
 		
-		if (!valid) {
-			simulatorListener.validationFailed();
+		if (counter == Main.BOARD_SIZE * Main.BOARD_SIZE) {		// all grids are filled...
+			simulationListener.noEmptyGrid();
+			
+			return false;
 		}
 		
 		return valid;
@@ -145,10 +145,10 @@ public class Simulator implements Runnable {
 	@Override
 	public void run() {
 		if (simulate(initialGrid)) {
-			simulatorListener.simulationStopped();
+			simulationListener.simulationStopped();
 		}
 		else {
-			simulatorListener.simulationFailed();
+			simulationListener.simulationFailed();
 		}
 	}
 	

@@ -1,6 +1,6 @@
 package sudoku.simulator;
 
-public interface SimulatorListener {
+public interface SimulationListener {
 	
 	public void simulationStopped();
 	public void simulationFailed();
