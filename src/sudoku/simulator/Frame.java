@@ -27,7 +27,7 @@ public class Frame extends JFrame implements ActionListener, MouseListener, Mous
 	private static final long serialVersionUID = 6210472781464718706L;
 	
 	private Grid selectedGrid;
-	private JCheckBox checkBoxShowBacktracking;
+	private JCheckBox checkBoxVisualizeBacktracking;
 	private JButton buttonSimulate, buttonLoad, buttonSave;
 	
 	private Simulator simulator;
@@ -76,9 +76,9 @@ public class Frame extends JFrame implements ActionListener, MouseListener, Mous
 		JPanel controlPanelCenter = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		controlPanel.add(controlPanelCenter, BorderLayout.CENTER);
 		
-		checkBoxShowBacktracking = new JCheckBox("Show backtracking");
-		checkBoxShowBacktracking.addActionListener(this);
-		controlPanelCenter.add(checkBoxShowBacktracking);
+		checkBoxVisualizeBacktracking = new JCheckBox("Visualize backtracking");
+		checkBoxVisualizeBacktracking.addActionListener(this);
+		controlPanelCenter.add(checkBoxVisualizeBacktracking);
 		
 		JPanel controlPanelEast= new JPanel();
 		controlPanel.add(controlPanelEast, BorderLayout.EAST);
@@ -102,7 +102,7 @@ public class Frame extends JFrame implements ActionListener, MouseListener, Mous
 	}
 	
 	private void load() {
-		File file = new File("saved-data.sudoku");
+		File file = new File(Main.FILE_NAME);
 		
 		if (!file.exists()) {
 			return;
@@ -179,7 +179,7 @@ public class Frame extends JFrame implements ActionListener, MouseListener, Mous
 		}
 		
 		try {
-			PrintWriter printWriter = new PrintWriter(new File("saved-data.sudoku"));
+			PrintWriter printWriter = new PrintWriter(new File(Main.FILE_NAME));
 			printWriter.print(stringBuilder.toString());
 			printWriter.flush();
 			printWriter.close();
@@ -193,9 +193,9 @@ public class Frame extends JFrame implements ActionListener, MouseListener, Mous
 	
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		if (event.getSource().equals(checkBoxShowBacktracking)) {
+		if (event.getSource().equals(checkBoxVisualizeBacktracking)) {
 			if (simulator != null) {
-				simulator.setBacktrackingVisibility(checkBoxShowBacktracking.isSelected());
+				simulator.enableVisualization(checkBoxVisualizeBacktracking.isSelected());
 			}
 		}
 		else {
@@ -207,7 +207,7 @@ public class Frame extends JFrame implements ActionListener, MouseListener, Mous
 					button.setText("Stop");
 					enableControls(false);
 					
-					simulator = new Simulator(checkBoxShowBacktracking.isSelected(), Grid.grids[0][0][0][0]);		// we will always start from the first grid of the board...
+					simulator = new Simulator(checkBoxVisualizeBacktracking.isSelected(), Grid.grids[0][0][0][0]);		// we will always start from the first grid of the board...
 					simulator.addSimulationListener(this);
 					
 					if (simulator.areValuesValid()) {

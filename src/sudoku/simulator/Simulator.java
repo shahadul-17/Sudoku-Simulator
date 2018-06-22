@@ -2,20 +2,22 @@ package sudoku.simulator;
 
 public class Simulator implements Runnable {
 	
-	private boolean backtrackingVisibile;
-	private char flag = 0;		// initially flag is false...
+	private boolean visualizationEnabled;
+	private char flag = 0;		// flag: 0 -> flag not raised...
+								// 		 1 -> simulate() method is called (at-least once)...
+								// 		 2 -> stop() method is called...
 	
 	private SimulationListener simulationListener;
 	
 	private Grid initialGrid;
 	
-	public Simulator(boolean backtrackingVisible, Grid initialGrid) {
-		this.backtrackingVisibile = backtrackingVisible;
+	public Simulator(boolean visualizationEnabled, Grid initialGrid) {
+		this.visualizationEnabled = visualizationEnabled;
 		this.initialGrid = initialGrid;
 	}
 	
-	public void setBacktrackingVisibility(boolean backtrackingVisible) {
-		this.backtrackingVisibile = backtrackingVisible;
+	public void enableVisualization(boolean visualizationEnabled) {
+		this.visualizationEnabled = visualizationEnabled;
 	}
 	
 	public void stop() {
@@ -105,11 +107,13 @@ public class Simulator implements Runnable {
 			return true;
 		}
 		
-		flag = 1;		// this flag is used to identify if this method has been called once...
+		flag = 1;		// this flag is used to identify if this method has been called at-least once...
 		
-		if (backtrackingVisibile) {		// if backtracking is not visible, no thread sleep needed...
+		if (visualizationEnabled) {		// if visualization is not enabled, no thread sleep needed, no need to show colors...
+			currentGrid.highlight();		// highlights (sets green background) currently selected grid by simulator...
+			
 			try {
-				Thread.sleep(20);
+				Thread.sleep(50);		// background thread is paused for 50 milliseconds...
 			}
 			catch (Exception exception) {
 				// don't need to handle this exception...
@@ -124,20 +128,20 @@ public class Simulator implements Runnable {
 			if (isValid(digit, currentGrid)) {
 				currentGrid.setDigit(digit);
 				
-				if (backtrackingVisibile) {		// if backtracking is not visible, no need to show colors...
-					currentGrid.highlight();
-				}
-				
 				if (simulate(Grid.getNextGrid(false, currentGrid))) {
 					return true;
 				}
 			}
-			else if (backtrackingVisibile) {		// if backtracking is not visible, no need to show colors...
-				currentGrid.setInvalid(true);
+			else if (visualizationEnabled) {		// if visualization is not enabled, no need to show colors...
+				currentGrid.setInvalid(true);		// grid is marked as invalid (setting red background) by simulator...
 			}
 		}
 		
 		currentGrid.setDigit('0');		// clearing the grid for backtracking...
+		
+		if (visualizationEnabled) {		// if visualization is not enabled, no need to show colors...
+			currentGrid.setInvalid(true);		// grid is marked as invalid (setting red background) by simulator...
+		}
 		
 		return false;
 	}
@@ -145,6 +149,7 @@ public class Simulator implements Runnable {
 	@Override
 	public void run() {
 		if (simulate(initialGrid)) {
+			Grid.reset();
 			simulationListener.simulationStopped();
 		}
 		else {

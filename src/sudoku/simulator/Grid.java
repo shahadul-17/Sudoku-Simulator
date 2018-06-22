@@ -16,7 +16,7 @@ public class Grid extends JLabel implements FocusListener {
 	private static final int BORDER_WIDTH = 3;
 	private static final long serialVersionUID = -493280532824123771L;
 	
-	private static Grid tempGrid;
+	private static Grid invalidGrid, highlightedGrid;
 	public static Grid[][][][] grids = new Grid[Main.GRID_SIZE][Main.GRID_SIZE][Main.GRID_SIZE][Main.GRID_SIZE];
 	
 	private static final Color COLOR_FOCUSED = new Color(230, 230, 255),
@@ -79,30 +79,40 @@ public class Grid extends JLabel implements FocusListener {
 		}
 	}
 	
-	public void highlight() {
-		if (tempGrid != null) {
-			tempGrid.setBackground(Color.WHITE);
-		}
-		
-		setBackground(COLOR_HIGHLIGHT);
-		
-		tempGrid = this;
-	}
-	
 	public void setValid() {
 		setBackground(Color.WHITE);
 	}
 	
+	public void highlight() {
+		if (highlightedGrid != null) {
+			highlightedGrid.setValid();
+		}
+		
+		setBackground(COLOR_HIGHLIGHT);
+		
+		highlightedGrid = this;
+	}
+	
 	public void setInvalid(boolean global) {
 		if (global) {
-			if (tempGrid != null) {
-				tempGrid.setBackground(Color.WHITE);
+			if (invalidGrid != null) {
+				invalidGrid.setValid();
 			}
 			
-			tempGrid = this;
+			invalidGrid = this;
 		}
 		
 		setBackground(COLOR_INVALID);
+	}
+	
+	public static void reset() {		// resets last detected invalid-grid and highlighted-grid to valid (sets white background)...
+		if (invalidGrid != null) {
+			invalidGrid.setValid();
+		}
+		
+		if (highlightedGrid != null) {
+			highlightedGrid.setValid();
+		}
 	}
 	
 	public void markAsInitialValue(boolean flag) {
@@ -121,7 +131,7 @@ public class Grid extends JLabel implements FocusListener {
 
 	@Override
 	public void focusLost(FocusEvent event) {
-		setBackground(Color.WHITE);
+		setValid();
 	}
 	
 	@Override
